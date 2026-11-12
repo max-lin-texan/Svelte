@@ -6,6 +6,10 @@ import { attachDatabasePool } from "@vercel/functions";
 const EJSON = BSON.EJSON;
 
 export const load: PageServerLoad = async ({ params }) => {
+	if (!MONGO_MONGODB_URI) {
+		error(503, 'MONGO_MONGODB_URI is not configured');
+	}
+
 	const client = new MongoClient(MONGO_MONGODB_URI);
 	attachDatabasePool(client);
 

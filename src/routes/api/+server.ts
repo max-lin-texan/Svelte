@@ -7,27 +7,26 @@ const EJSON = BSON.EJSON;
 //https://www.mongodb.com/docs/drivers/node/current/data-formats/extended-json/
 
 export const GET: RequestHandler = async({ url }) => {
+	if (MONGO_MONGODB_URI) {
+		console.log(MONGO_MONGODB_URI);
 
-	console.log(MONGO_MONGODB_URI);
+		const client = new MongoClient(MONGO_MONGODB_URI);
+		attachDatabasePool(client);
 
+		try {
+			const database = client.db('sample_mflix');
+			const movies = database.collection('movies');
 
-	const client = new MongoClient(MONGO_MONGODB_URI);
-	attachDatabasePool(client);
-
-
-	try {
-		const database = client.db('sample_mflix');
-		const movies = database.collection('movies');
-
-		// Queries for a movie that has a title value of 'Back to the Future'
-		const query = { title: 'Back to the Future' };
-		const movie = await movies.findOne(query);
-		console.log(movie);
-		if (movie) {
-			return Response.json(EJSON.serialize(movie))
+			// Queries for a movie that has a title value of 'Back to the Future'
+			const query = { title: 'Back to the Future' };
+			const movie = await movies.findOne(query);
+			console.log(movie);
+			if (movie) {
+				return Response.json(EJSON.serialize(movie))
+			}
+		} finally {
+			await client.close();
 		}
-	} finally {
-		await client.close();
 	}
 
 	const min = Number(url.searchParams.get('min') ?? '0');
