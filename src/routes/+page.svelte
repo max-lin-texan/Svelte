@@ -1,10 +1,25 @@
 <script>
-	import SoundEffect from "#lib/sound_effect.svelte";
-	import PopGoes from "./PopGoes.svelte";
+	let facts = $state([])
+
+	async function fetch_new_fact() {
+		try {
+			const result = await fetch("https://catfact.ninja/fact")
+			if (result.ok) {
+				const data = await result.json()
+				facts.push(data.fact)
+			} else {
+				alert("Oh no it broke.")
+			}
+		} catch {
+			alert("Oh no it super-broke.")
+		}
+	}
 </script>
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
-<PopGoes max = 5 onpop  ={()=>{alert("pop")}}></PopGoes>
-<br>
-<SoundEffect></SoundEffect>
+
+<ul>
+	{#each facts as fact}
+		<li>{fact}</li>
+	{/each}
+</ul>
+<button onclick={fetch_new_fact}>Get a new fact</button>
