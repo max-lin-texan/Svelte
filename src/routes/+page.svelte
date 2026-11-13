@@ -1,4 +1,6 @@
 <script>
+	import SoundEffect from "#lib/sound_effect.svelte";
+
 	let facts = $state([])
 
 	async function fetch_new_fact() {
@@ -23,3 +25,4 @@
 	{/each}
 </ul>
 <button onclick={fetch_new_fact}>Get a new fact</button>
+<SoundEffect></SoundEffect>
